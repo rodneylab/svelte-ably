@@ -53,6 +53,7 @@
 	}
 </script>
 
+<h1>Sveltably</h1>
 <form on:submit|preventDefault={sendMessage}>
 	<label for="message">Message</label>
 	<input bind:value={message} id="message" type="text" name="message" />
@@ -61,7 +62,7 @@
 
 <form on:submit|preventDefault={updateStatus}>
 	<label for="status">Status</label>
-	<input bind:value={status} id="message" type="text" name="status" />
+	<input bind:value={status} id="status" type="text" name="status" />
 	<button type="submit">Update status</button>
 </form>
 
