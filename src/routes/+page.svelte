@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cleanupPresence, initialisePresence } from '$lib/utilities/realtime';
+	import { ablyChannelName, cleanupPresence, initialisePresence } from '$lib/utilities/realtime';
 	import type { Types } from 'ably';
 	import { Realtime } from 'ably';
 	import { onMount } from 'svelte';
@@ -30,7 +30,7 @@
 		await ably.connection.once('connected');
 		serviceStatus = 'Connected to ably';
 
-		channel = ably.channels.get('getting-started');
+		channel = ably.channels.get(ablyChannelName);
 
 		channel?.subscribe((message) => {
 			messages = [...(messages ?? []), message];

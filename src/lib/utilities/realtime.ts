@@ -1,4 +1,7 @@
 import type { Types } from 'ably';
+import { PUBLIC_ABLY_CHANNEL } from '$env/static/public';
+
+export const ablyChannelName = PUBLIC_ABLY_CHANNEL;
 
 async function updatePresence(
 	channel: Types.RealtimeChannelPromise,
@@ -46,7 +49,7 @@ export function cleanupPresence(
 			updatePresence;
 		});
 
-		channel.unsubscribe('getting-started');
+		channel.unsubscribe(ablyChannelName);
 		channel.detach();
 	}
 	return [];
