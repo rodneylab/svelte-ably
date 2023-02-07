@@ -36,5 +36,8 @@
 		"vite": "^4.1.1",
 		"vitest": "^0.28.4"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"@js-temporal/polyfill": "^0.4.3"
+	}
 }
