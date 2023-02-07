@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { cleanupPresence, initialisePresence } from '$lib/utilities/realtime';
+	import type { Types } from 'ably';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
-	import type Ably from 'ably';
 
 	export let data: PageData;
 
@@ -9,8 +10,8 @@
 	$: ({ channel, serviceStatus } = data);
 
 	let message: string;
-	let messages: Ably.Types.Message[] = [];
-	let presenceData: Ably.Types.PresenceMessage[] = [];
+	let messages: Types.Message[] = [];
+	let presenceData: Types.PresenceMessage[] = [];
 	let status: string;
 
 	onMount(async () => {
@@ -18,33 +19,17 @@
 			messages = [...(messages ?? []), message];
 		});
 
-		async function updatePresence() {
-			const updatedPresenceData = await channel?.presence.get();
-			if (updatedPresenceData) {
-				presenceData = updatedPresenceData;
-			}
+		if (channel) {
+			presenceData = await initialisePresence(channel, presenceData);
 		}
-
-		channel?.presence.subscribe('enter', updatePresence);
-		channel?.presence.subscribe('leave', updatePresence);
-		channel?.presence.subscribe('update', updatePresence);
-
-		await channel?.presence.enter('');
-		presenceData = (await channel?.presence.get()) ?? [];
 
 		return () => {
 			if (channel) {
-				channel.presence.leave();
-				channel.presence.unsubscribe('enter', updatePresence);
-				channel.presence.unsubscribe('leave', updatePresence);
-				channel.presence.unsubscribe('update', updatePresence);
-
-				channel.unsubscribe('getting-started');
-				channel.detach();
+				presenceData = cleanupPresence(channel, presenceData);
 			}
-			presenceData = [];
 		};
 	});
+
 	function sendMessage() {
 		channel?.publish(message, { text: message });
 	}
